@@ -3,70 +3,49 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --panel: 210 40% 96.1%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215 19% 37%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 357.2 100% 45.3%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 215 20.2% 65.1%;
-
-    --radius: 0.5rem;
-  }
-
+  /* BrainDump: palette "Orion" (prova 12). Solo scuro per ora: chiaro e scuro coincidono. */
+  :root,
   .dark {
-    --background: 0 0% 1.2%;
-    --foreground: 0 0% 96%;
+    --background: 0 0% 14.9%;
+    --foreground: 129 18% 92.4%;
 
-    --panel: 0 0% 3.9%;
+    --panel: 0 0% 12.5%;
 
-    --card: 0 0% 7%;
-    --card-foreground: 0 0% 96%;
+    --card: 0 0% 17.5%;
+    --card-foreground: 129 18% 92.4%;
 
-    --popover: 0 0% 8.5%;
-    --popover-foreground: 0 0% 96%;
+    --popover: 0 0% 18.5%;
+    --popover-foreground: 129 18% 92.4%;
 
-    --primary: 223 87% 57%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 11 88% 56.9%;
+    --primary-foreground: 0 0% 14.9%;
 
-    --secondary: 0 0% 10.5%;
-    --secondary-foreground: 0 0% 96%;
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 129 18% 92.4%;
 
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 66%;
+    --muted: 0 0% 19%;
+    --muted-foreground: 134 6% 57.8%;
 
-    --accent: 0 0% 11%;
-    --accent-foreground: 0 0% 96%;
+    --accent: 0 0% 21%;
+    --accent-foreground: 129 18% 92.4%;
 
-    --destructive: 358.7 100% 69.6%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 5 69% 52%;
+    --destructive-foreground: 129 18% 92.4%;
 
-    --border: 0 0% 10.5%;
-    --input: 0 0% 14.5%;
-    --ring: 223 87% 57%;
+    --border: 130 6% 27%;
+    --input: 130 6% 32%;
+    --ring: 11 88% 56.9%;
+
+    --radius: 0rem;
+
+    /* colori BrainDump: linee, inchiostro sui blocchi, cartelle a rotazione */
+    --bd-line: 126 21% 81.2%;
+    --bd-ink: 0 0% 14.9%;
+    --bd-f1: 193 31% 71.2%;
+    --bd-f2: 47 87% 66.3%;
+    --bd-f3: 46 32% 87.3%;
+    --bd-f4: 132 24% 75.7%;
+    --bd-f5: 336 84% 80%;
   }
 }
 
@@ -115,4 +94,78 @@
   .sidebar-scrollbar:focus-within {
     scrollbar-color: hsl(var(--muted-foreground) / 0.15) transparent;
   }
+}
+
+/* BrainDump: angoli smussati, glitch, strisce, griglia e grana */
+@layer components {
+  .bd-cf {
+    clip-path: polygon(
+      14px 0,
+      100% 0,
+      100% calc(100% - 14px),
+      calc(100% - 14px) 100%,
+      0 100%,
+      0 14px
+    );
+  }
+  .bd-cfs {
+    clip-path: polygon(
+      8px 0,
+      100% 0,
+      100% calc(100% - 8px),
+      calc(100% - 8px) 100%,
+      0 100%,
+      0 8px
+    );
+  }
+  .bd-cfx {
+    clip-path: polygon(
+      5px 0,
+      100% 0,
+      100% calc(100% - 5px),
+      calc(100% - 5px) 100%,
+      0 100%,
+      0 5px
+    );
+  }
+  .bd-glitch {
+    text-shadow:
+      -2px 0 hsl(var(--primary)),
+      2px 0 hsl(var(--bd-line));
+  }
+  .bd-hazard {
+    background: repeating-linear-gradient(
+      -45deg,
+      hsl(var(--bd-ink)) 0 6px,
+      transparent 6px 12px
+    );
+  }
+  .bd-hatch {
+    background: repeating-linear-gradient(
+      -45deg,
+      #00000038 0 2px,
+      transparent 2px 7px
+    );
+  }
+  .bd-ticks-x {
+    height: 6px;
+    background: repeating-linear-gradient(
+      90deg,
+      hsl(var(--bd-line)) 0 1px,
+      transparent 1px 8px
+    );
+  }
+  .bd-label {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+}
+
+body {
+  background-image:
+    linear-gradient(#ffffff06 1px, transparent 1px),
+    linear-gradient(90deg, #ffffff06 1px, transparent 1px);
+  background-size: 24px 24px;
 }

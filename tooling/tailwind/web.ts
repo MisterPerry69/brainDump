@@ -9,6 +9,21 @@ export default {
   presets: [base],
   theme: {
     extend: {
+      colors: {
+        bd: {
+          line: "hsl(var(--bd-line))",
+          ink: "hsl(var(--bd-ink))",
+          f1: "hsl(var(--bd-f1))",
+          f2: "hsl(var(--bd-f2))",
+          f3: "hsl(var(--bd-f3))",
+          f4: "hsl(var(--bd-f4))",
+          f5: "hsl(var(--bd-f5))",
+        },
+      },
+      fontFamily: {
+        sans: ["var(--font-archivo)", "sans-serif"],
+        mono: ["var(--font-mono)", "monospace"],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

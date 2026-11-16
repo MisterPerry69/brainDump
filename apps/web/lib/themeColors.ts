@@ -6,6 +6,6 @@
  * and the client-side sync that follows the in-app theme.
  */
 export const THEME_COLORS = {
-  light: "#ffffff",
-  dark: "#030303",
+  light: "#262626",
+  dark: "#262626",
 } as const;

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Archivo, JetBrains_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import "@karakeep/tailwind-config/globals.css";
@@ -15,16 +15,23 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { clientConfig } from "@karakeep/shared/config";
 
-const inter = Inter({
+const archivo = Archivo({
   subsets: ["latin"],
+  weight: ["500", "700", "800", "900"],
+  variable: "--font-archivo",
   fallback: ["sans-serif"],
+});
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-mono",
+  fallback: ["monospace"],
 });
 
 export const metadata: Metadata = {
-  title: "Karakeep",
-  applicationName: "Karakeep",
-  description:
-    "The Bookmark Everything app. Hoard links, notes, and images and they will get automatically tagged with AI.",
+  title: "BrainDump",
+  applicationName: "BrainDump",
+  description: "Brain dump personale: salva da ovunque, smista in cartelle.",
   icons: {
     // No media queries: crawlers (e.g. Google's favicon fetcher) skip icons
     // that are conditional on one. favicon.svg adapts to dark mode itself.
@@ -36,7 +43,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "Karakeep",
+    title: "BrainDump",
   },
   formatDetection: {
     telephone: false,
@@ -71,7 +78,7 @@ export default async function RootLayout({
       dir={isRTL ? "rtl" : "ltr"}
       suppressHydrationWarning
     >
-      <body className={inter.className}>
+      <body className={`${archivo.variable} ${mono.variable} font-sans`}>
         <NuqsAdapter>
           <Providers
             session={session}

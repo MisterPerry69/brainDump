@@ -6,12 +6,14 @@ import {
   asc,
   desc,
   eq,
+  exists,
   getTableColumns,
   gt,
   inArray,
   lt,
   lte,
   ne,
+  notExists,
   or,
   SQL,
 } from "drizzle-orm";
@@ -533,6 +535,15 @@ export class Bookmark extends BareBookmark {
         includesOthersBookmarks,
       ),
       input.ids ? inArray(bookmarks.id, input.ids) : undefined,
+      // BrainDump: inList=false is the "da smistare" inbox (in no list at all)
+      input.inList === undefined
+        ? undefined
+        : (input.inList ? exists : notExists)(
+            ctx.db
+              .select({ id: bookmarksInLists.bookmarkId })
+              .from(bookmarksInLists)
+              .where(eq(bookmarksInLists.bookmarkId, bookmarks.id)),
+          ),
     ];
 
     // Build ORDER BY clause

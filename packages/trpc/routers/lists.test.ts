@@ -1515,4 +1515,28 @@ describe("Nested smart lists", () => {
       bookmarksInSmartList.bookmarks.find((b) => b.id === bookmark2.id),
     ).toBeUndefined();
   });
+
+  test<CustomTestContext>("getBookmarks inList filter splits the inbox from the lists", async ({
+    apiCallers,
+  }) => {
+    const api = apiCallers[0];
+    const filed = await createTestBookmark(api);
+    const loose = await createTestBookmark(api);
+    const list = await api.lists.create({
+      name: "Idee",
+      icon: "💡",
+      type: "manual",
+    });
+    await api.lists.addToList({ listId: list.id, bookmarkId: filed });
+
+    const inbox = await api.bookmarks.getBookmarks({ inList: false });
+    expect(inbox.bookmarks.map((b) => b.id)).toEqual([loose]);
+    const inLists = await api.bookmarks.getBookmarks({ inList: true });
+    expect(inLists.bookmarks.map((b) => b.id)).toEqual([filed]);
+    const inThisList = await api.bookmarks.getBookmarks({
+      listId: list.id,
+      inList: true,
+    });
+    expect(inThisList.bookmarks.map((b) => b.id)).toEqual([filed]);
+  });
 });

@@ -11,6 +11,9 @@ import { useTRPC } from "@karakeep/shared-react/trpc";
 import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
 import { ZBookmarkList } from "@karakeep/shared/types/lists";
 
+import { useBookmarkLists } from "@karakeep/shared-react/hooks/lists";
+
+import { FOLDER_COLORS, folderIndex } from "../bookmarks/HomeMap";
 import QueryExplainerTooltip from "../search/QueryExplainerTooltip";
 import { ListOptions } from "./ListOptions";
 import {
@@ -43,6 +46,8 @@ export default function ListHeader({
     }),
   );
   const itemCount = statsData?.stats.get(list.id);
+  const { data: allLists } = useBookmarkLists();
+  const slot = folderIndex(allLists?.data ?? [], list.id);
 
   const parsedQuery = useMemo(() => {
     if (!list.query) {
@@ -59,19 +64,25 @@ export default function ListHeader({
   }
 
   return (
-    <div className="flex items-start justify-between gap-4">
+    <div
+      className={`bd-cf relative flex items-start justify-between gap-4 p-5 text-bd-ink ${FOLDER_COLORS[slot % FOLDER_COLORS.length]}`}
+    >
+      <div className="bd-hatch pointer-events-none absolute inset-y-0 right-0 w-1/4 opacity-60" />
       <div className="flex min-w-0 flex-1 items-start gap-4">
-        <span className="flex size-16 shrink-0 items-center justify-center rounded-2xl bg-muted text-4xl">
+        <span className="bd-cfs flex size-16 shrink-0 items-center justify-center bg-bd-ink text-4xl">
           {list.icon}
         </span>
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-2xl font-semibold leading-tight">
+          <div className="bd-label">
+            Cartella // {String(slot + 1).padStart(2, "0")}
+          </div>
+          <h1 className="truncate text-4xl font-black leading-none tracking-tight">
             {list.name}
           </h1>
           {list.description && (
-            <p className="mt-1 text-muted-foreground">{list.description}</p>
+            <p className="mt-1 opacity-75">{list.description}</p>
           )}
-          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+          <div className="bd-label mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
             {itemCount !== undefined && (
               <>
                 <span>{t("lists.items_count", { count: itemCount })}</span>
@@ -87,7 +98,7 @@ export default function ListHeader({
                   trigger={
                     <button
                       type="button"
-                      className="inline-flex cursor-help items-center gap-1 transition-colors hover:text-foreground"
+                      className="inline-flex cursor-help items-center gap-1 transition-opacity hover:opacity-70"
                     >
                       <Sparkles className="size-3.5" />
                       {t("lists.smart_list")}
@@ -100,7 +111,12 @@ export default function ListHeader({
           </div>
         </div>
       </div>
-      <div className="flex shrink-0 items-center">
+      <div className="relative flex shrink-0 items-center gap-2">
+        {itemCount !== undefined && (
+          <span className="bd-glitch text-6xl font-black leading-none tracking-tighter">
+            {String(itemCount).padStart(2, "0")}
+          </span>
+        )}
         <ListOptions list={list}>
           <Button variant="ghost">
             <MoreHorizontal className="size-6" />

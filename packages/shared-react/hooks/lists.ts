@@ -96,6 +96,11 @@ export function useAddBookmarkToList(
           queryClient,
           api.bookmarks.getBookmarks.queryFilter({ listId: req.listId }),
         );
+        // BrainDump: the "da smistare" inbox changes when list membership does
+        scheduleInvalidateQueries(
+          queryClient,
+          api.bookmarks.getBookmarks.queryFilter({ inList: false }),
+        );
         scheduleInvalidateQueries(
           queryClient,
           api.bookmarks.getBookmarks.infiniteQueryFilter({
@@ -126,6 +131,11 @@ export function useRemoveBookmarkFromList(
         scheduleInvalidateQueries(
           queryClient,
           api.bookmarks.getBookmarks.queryFilter({ listId: req.listId }),
+        );
+        // BrainDump: the "da smistare" inbox changes when list membership does
+        scheduleInvalidateQueries(
+          queryClient,
+          api.bookmarks.getBookmarks.queryFilter({ inList: false }),
         );
         scheduleInvalidateQueries(
           queryClient,

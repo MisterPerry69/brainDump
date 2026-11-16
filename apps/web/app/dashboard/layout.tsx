@@ -15,6 +15,7 @@ import {
   ClipboardList,
   Highlighter,
   Home,
+  Inbox,
   Search,
   Tag,
 } from "lucide-react";
@@ -61,6 +62,11 @@ export default async function Dashboard({
         name: t("common.home"),
         icon: <Home size={18} />,
         path: "/dashboard/bookmarks",
+      },
+      {
+        name: "Smista",
+        icon: <Inbox size={18} />,
+        path: "/dashboard/smista",
       },
       PluginManager.isRegistered(PluginType.Search)
         ? [

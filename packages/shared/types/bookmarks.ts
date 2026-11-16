@@ -288,6 +288,8 @@ export const MAX_NUM_BOOKMARKS_PER_PAGE = 100;
 export const zGetBookmarksRequestSchema = z.object({
   archived: z.boolean().optional(),
   favourited: z.boolean().optional(),
+  // BrainDump: false = only bookmarks that are in no list
+  inList: z.boolean().optional(),
   tagId: z.string().optional(),
   listId: z.string().optional(),
   rssFeedId: z.string().optional(),
