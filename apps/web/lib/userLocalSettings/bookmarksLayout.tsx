@@ -36,9 +36,9 @@ export function useBookmarkDisplaySettings() {
   };
 }
 
-export function useBookmarkLayout() {
-  const settings = useUserLocalSettings();
-  return settings.bookmarkGridLayout;
+// BrainDump: sempre righe tutte uguali (bozza 09), la scelta di vista è ignorata.
+export function useBookmarkLayout(): BookmarksLayoutTypes {
+  return "compact";
 }
 
 export function useInterfaceLang() {

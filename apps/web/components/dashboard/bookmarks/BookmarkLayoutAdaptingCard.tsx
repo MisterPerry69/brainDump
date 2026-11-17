@@ -23,12 +23,7 @@ import {
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import {
-  GripVertical,
-  Image as ImageIcon,
-  NotebookPen,
-  Square,
-} from "lucide-react";
+import { GripVertical, NotebookPen, Square } from "lucide-react";
 
 import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
 import { useBookmarkListContext } from "@karakeep/shared-react/hooks/bookmark-list-context";
@@ -41,9 +36,7 @@ import {
 import { switchCase } from "@karakeep/shared/utils/switch";
 
 import BookmarkActionBar, { FavouriteButton } from "./BookmarkActionBar";
-import BookmarkFavicon from "./BookmarkFavicon";
 import BookmarkFormattedCreatedAt from "./BookmarkFormattedCreatedAt";
-import { getDisplayDomain } from "./FooterLinkURL";
 import BookmarkOwnerIcon from "./BookmarkOwnerIcon";
 import {
   ArchivedActionIcon,
@@ -744,6 +737,32 @@ function GridView({
   );
 }
 
+const KIND_BADGE: Record<string, [string, string]> = {
+  link: ["LINK", "bg-bd-f1"],
+  text: ["NOTA", "bg-bd-f2"],
+  pdf: ["PDF", "bg-bd-f3"],
+  image: ["IMG", "bg-bd-f5"],
+};
+const OLD_MS = 30 * 24 * 3600 * 1000;
+
+function KindBadge({ bookmark }: { bookmark: ZBookmark }) {
+  const c = bookmark.content;
+  const [label, bg] = KIND_BADGE[c.type === "asset" ? c.assetType : c.type] ?? [
+    "FILE",
+    "bg-bd-f3",
+  ];
+  return (
+    <span
+      className={cn(
+        "bd-cfx w-11 shrink-0 text-center font-mono text-[10px] font-bold leading-5 text-bd-ink",
+        bg,
+      )}
+    >
+      {label}
+    </span>
+  );
+}
+
 function CompactView({
   bookmark,
   title,
@@ -760,7 +779,10 @@ function CompactView({
   return (
     <div
       className={cn(
-        "group relative isolate flex min-h-10 items-center gap-2 pl-3 pr-1 text-sm transition-colors focus-within:bg-accent/50 hover:bg-accent/50 max-sm:min-h-11 [@media(pointer:coarse)]:min-h-11",
+        "group relative isolate flex h-11 items-center gap-3 border-b border-dashed border-border pl-1 pr-1 text-sm transition-colors focus-within:bg-accent/50 hover:bg-accent/50",
+        // the hatch marks what has sat here for over 30 days
+        Date.now() - new Date(bookmark.createdAt).getTime() > OLD_MS &&
+          "bd-hatch",
         className,
       )}
       data-bookmark-index={bookmarkIndex}
@@ -768,20 +790,9 @@ function CompactView({
       <BulkEditSelectionOverlay bookmark={bookmark} />
       <OwnerIndicator bookmark={bookmark} />
       {!showTitle && <KeyboardPreviewLink bookmark={bookmark} />}
-      {bookmark.content.type === BookmarkTypes.LINK && (
-        <BookmarkFavicon
-          src={bookmark.content.favicon}
-          domain={getDisplayDomain(bookmark.content.url)}
-        />
-      )}
-      {bookmark.content.type === BookmarkTypes.TEXT && (
-        <NotebookPen className="size-4 shrink-0 text-muted-foreground" />
-      )}
-      {bookmark.content.type === BookmarkTypes.ASSET && (
-        <ImageIcon className="size-4 shrink-0 text-muted-foreground" />
-      )}
+      <KindBadge bookmark={bookmark} />
       {showTitle ? (
-        <div className="line-clamp-2 min-w-0 flex-1 break-words font-medium sm:line-clamp-none sm:truncate">
+        <div className="min-w-0 flex-1 truncate font-bold">
           {title ?? (
             <Link href={`/dashboard/preview/${bookmark.id}`}>
               {getBookmarkDisplayTitle(bookmark) ?? t("common.untitled")}

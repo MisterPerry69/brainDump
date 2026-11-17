@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { EditListModal } from "@/components/dashboard/lists/EditListModal";
 import { cn } from "@/lib/utils";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
@@ -159,11 +160,7 @@ function IncomingTape({ items }: { items: ZBookmark[] | undefined }) {
   );
 }
 
-export default function HomeMap({
-  initialLists,
-}: {
-  initialLists: ZBookmarkList[];
-}) {
+function useMapData(initialLists: ZBookmarkList[]) {
   const api = useTRPC();
   const { data: listsData } = useBookmarkLists();
   // Same as the sidebar: server data first, so SSR and client agree.
@@ -180,15 +177,87 @@ export default function HomeMap({
       limit: INBOX_LIMIT,
     }),
   );
-  const { data: recent } = useQuery(
-    api.bookmarks.getBookmarks.queryOptions({ limit: 5 }),
-  );
-
   const folders = (lists?.data ?? [])
     .filter((l) => !l.parentId)
     // index = stable position (creation order), so a folder keeps its color
     .map((l, index) => ({ list: l, index, count: stats?.stats.get(l.id) ?? 0 }))
     .sort((a, b) => b.count - a.count);
+  return { folders, inbox: inbox?.bookmarks };
+}
+
+function NewFolder({ className }: { className?: string }) {
+  return (
+    <EditListModal>
+      <button
+        className={cn(
+          "bd-label border-[1.5px] border-dashed border-bd-line/40 px-3 py-2 text-muted-foreground hover:border-primary hover:text-primary",
+          className,
+        )}
+      >
+        + nuova_cartella
+      </button>
+    </EditListModal>
+  );
+}
+
+/** The map as a column, beside an open folder (bozza 09). */
+export function FolderColumn({
+  initialLists,
+  currentId,
+}: {
+  initialLists: ZBookmarkList[];
+  currentId: string;
+}) {
+  const { folders, inbox } = useMapData(initialLists);
+  const n = inbox?.length ?? 0;
+  return (
+    <nav className="hidden w-48 shrink-0 flex-col gap-2 md:flex">
+      <Link
+        href="/dashboard/smista"
+        className="bd-cfs flex flex-col bg-primary text-bd-ink"
+      >
+        <span className="flex items-center justify-between px-3 py-2 font-black">
+          Da smistare
+          <span className="font-mono text-xs">
+            {n >= INBOX_LIMIT ? INBOX_LIMIT + "+" : String(n).padStart(2, "0")}
+          </span>
+        </span>
+        <span className="bd-hazard h-1.5" />
+      </Link>
+      {folders.map(({ list, index, count }) => (
+        <Link
+          key={list.id}
+          href={`/dashboard/lists/${list.id}`}
+          className={cn(
+            "bd-cfs flex items-center justify-between px-3 py-2 font-black text-bd-ink transition-transform",
+            FOLDER_COLORS[index % FOLDER_COLORS.length],
+            list.id === currentId ? "translate-x-3" : "hover:translate-x-1",
+          )}
+        >
+          <span className="truncate">{list.name}</span>
+          <span className="font-mono text-xs">
+            {String(count).padStart(2, "0")}
+          </span>
+        </Link>
+      ))}
+      <NewFolder />
+      <div className="bd-label mt-2 text-muted-foreground">
+        Totale {folders.reduce((t, f) => t + f.count, 0)}
+      </div>
+    </nav>
+  );
+}
+
+export default function HomeMap({
+  initialLists,
+}: {
+  initialLists: ZBookmarkList[];
+}) {
+  const api = useTRPC();
+  const { folders, inbox } = useMapData(initialLists);
+  const { data: recent } = useQuery(
+    api.bookmarks.getBookmarks.queryOptions({ limit: 5 }),
+  );
   const rows = [folders.slice(0, 2)];
   for (let i = 2; i < folders.length; i += 3)
     rows.push(folders.slice(i, i + 3));
@@ -200,9 +269,10 @@ export default function HomeMap({
           Settore_A // Mappa_archivio // {folders.length} cartelle
         </div>
         <div className="bd-ticks-x flex-1 opacity-40" />
+        <NewFolder className="py-1" />
       </div>
       <div className="flex flex-col gap-2 md:flex-row">
-        <InboxBlock items={inbox?.bookmarks} />
+        <InboxBlock items={inbox} />
         <div className="flex flex-1 flex-col gap-2">
           {folders.length === 0 && (
             <div className="bd-cf grid h-[196px] place-items-center border-[1.5px] border-dashed border-bd-line/40 font-mono text-sm text-muted-foreground">

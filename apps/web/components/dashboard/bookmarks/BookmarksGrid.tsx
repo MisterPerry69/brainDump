@@ -64,6 +64,8 @@ const BookmarkGridItem = memo(function BookmarkGridItem({
     <ErrorBoundary fallback={<UnknownCard bookmark={bookmark} />}>
       <StyledBookmarkCard
         className={cn(
+          // BrainDump: righe attaccate, il separatore lo mette la riga
+          "mb-0 border-x-0 border-t-0 border-dashed bg-transparent hover:shadow-none",
           isFocused &&
             "ring-2 ring-primary ring-offset-2 ring-offset-background",
         )}
